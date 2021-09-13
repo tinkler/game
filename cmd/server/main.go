@@ -2,15 +2,11 @@ package main
 
 import (
 	"context"
-	"log"
 	"net"
-	"net/http"
-	"net/rpc"
 
 	"google.golang.org/grpc"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	pb "sfs.ink/liang/game/api/proto/game"
-	"sfs.ink/liang/game/internal/game_rpc"
 	"sfs.ink/liang/game/pkg/attr"
 	"sfs.ink/liang/game/pkg/game"
 	"sfs.ink/liang/game/pkg/logger"
@@ -104,19 +100,6 @@ func (s *serverNode) UpdateTank(ctx context.Context, in *pb.TankAttr) (*pb.StepF
 	return pf, nil
 }
 
-func runRpc() {
-	g := game_rpc.NewGameRpc()
-	rpc.Register(g)
-	rpc.HandleHTTP()
-	node := newServerNode(context.Background())
-	lis, err := net.Listen("tcp", ":9301")
-	if err != nil {
-		log.Fatalln("fatal error: ", err)
-	}
-	node.log.Info("start connection")
-	http.Serve(lis, nil)
-}
-
 func runGrpc() {
 	sn := newServerNode(context.Background())
 	lis, err := net.Listen("tcp", ":9301")
@@ -131,7 +114,5 @@ func runGrpc() {
 }
 
 func main() {
-	// rpc
-	// runRpc()
 	runGrpc()
 }

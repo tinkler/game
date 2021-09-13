@@ -75,7 +75,15 @@ LOOP:
 		f.T = time.Now()
 		f.V = tanks
 		for _, c := range s.clients {
-			c.FrameCh <- f
+			go func(client *RelayClient) {
+				timeout := time.NewTimer(time.Microsecond * 500)
+				select {
+				case client.FrameCh <- f:
+					return
+				case <-timeout.C:
+					return
+				}
+			}(c)
 		}
 		s.Unlock()
 		time.Sleep(fps)
@@ -94,6 +102,7 @@ func (s *RelaySrc) UpdateClient(data tank.Tank) Frame {
 		s.log.Warn("update unkown tank ", name)
 		return Frame{}
 	}
+	s.stepFrame++
 	tk.updateData <- data
 	return Frame{S: s.stepFrame, T: time.Now()}
 }

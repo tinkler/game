@@ -24,7 +24,7 @@ func main() {
 	// }
 	// fmt.Printf("Returnning session %s\n", res.Session)
 
-	conn, err := grpc.Dial("localhost:9301", grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial("ssdf.sedns.cn:9301", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
