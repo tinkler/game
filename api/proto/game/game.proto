@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option go_package = "sfs.ink/liang/game/api/proto/game";
+option java_multiple_files = true;
+option java_package = "ink.sfs.game";
+option java_outer_classname = "GameProto";
+
+package game;
+
+import "google/protobuf/timestamp.proto";
+
+service Game {
+    rpc LoginChar (LoginRequest) returns (LoginResponse) {}
+    rpc MoveChar (MoveRequest) returns (StepFrame) {}
+    rpc RelayTank (TankAttr) returns (stream TanksAttr) {}
+    rpc UpdateTank (TankAttr) returns (StepFrame) {}
+}
+
+message LoginRequest {
+    int32 id = 1;
+}
+
+message LoginResponse {
+    string session = 1;
+}
+
+message MoveRequest {
+    enum Direction {
+        UP = 0;
+        RIGHT = 1;
+        DOWN = 2;
+        LEFT = 3;
+    }
+    Direction direction = 5;
+}
+
+message StepFrame {
+    int64 s = 1;
+    google.protobuf.Timestamp t = 2;
+}
+
+message GameWorld {
+    int32 id = 1;
+}
+
+message Offset {
+    double dx = 1;
+    double dy = 2;
+}
+
+message TankAttr {
+    Offset position = 1;
+    float body_angle = 2;
+    float turret_angle = 3;
+    float target_body_angle = 4;
+    float target_turret_angle = 5;
+    string name = 6;
+}
+
+message TanksAttr {
+    repeated TankAttr tanks = 1;
+    StepFrame step = 2;
+}
