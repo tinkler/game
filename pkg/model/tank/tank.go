@@ -26,12 +26,17 @@ func (t Tank) Attr() (dx, dy, bodyAngle, turretAngle float64) {
 	return t.position.Dx, t.position.Dy, t.bodyAngle, t.turretAngle
 }
 
+// UpdateTo 直接更新为新数据
+// 用于客户端重连时的状态校准
 func (t *Tank) UpdateTo(tk Tank) {
+	// TODO: 区分有效的状态,防止作弊
 	t.position = tk.position
 	t.bodyAngle, t.targetBodyAngle = tk.bodyAngle, tk.targetBodyAngle
 	t.turretAngle, t.targetTurretAngle = tk.turretAngle, tk.targetTurretAngle
 }
 
+// Update 服务端更新坦克状态
+// 当客户端断开或延迟时,由服务器继续执行剩下动作,更新状态
 func (t *Tank) Update(dt float64) {
 	rotationRate := math.Pi * dt
 	if t.targetBodyAngle != 0 {

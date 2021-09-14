@@ -14,6 +14,7 @@ const (
 	KC_RAND_KIND_ALL
 )
 
+// Krand 生成各类型随机数
 func Krand(size int, kind KrandKind) []byte {
 	ikind := int(kind)
 	kinds := [][]int{{10, 48}, {26, 97}, {26, 65}}

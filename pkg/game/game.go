@@ -30,12 +30,10 @@ func NewGame(ctx context.Context, id int) *Game {
 		charSrv:  cs,
 		relaySrv: newRelaySrv(ctx),
 	}
+	// 并行帧同步服务
+	// TODO: Split into service mesh
 	go g.relaySrv.Serve()
 	return g
-}
-
-func (g *Game) ID() int {
-	return g.id
 }
 
 func (g *Game) LoginChar(id int) {

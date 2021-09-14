@@ -105,6 +105,7 @@ func Warn(f interface{}, v ...interface{}) {
 			append([]byte(writeMsg(LWarn, format(f, v...))), '\n')...))
 }
 
+// Info 普通日志打印
 func (l *Logger) Info(f interface{}, v ...interface{}) {
 	os.Stdout.Write(
 		append(

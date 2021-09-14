@@ -42,6 +42,7 @@ func newServerNode(ctx context.Context) *serverNode {
 	return node
 }
 
+// LoginChar 登陆角色
 func (s *serverNode) LoginChar(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {
 	ses := util.Krand(32, util.KC_RAND_KIND_ALL)
 	s.stub.LoginChar(int(in.Id))
@@ -50,6 +51,7 @@ func (s *serverNode) LoginChar(ctx context.Context, in *pb.LoginRequest) (*pb.Lo
 	}, nil
 }
 
+// MoveChar 移动角色
 func (s *serverNode) MoveChar(ctx context.Context, in *pb.MoveRequest) (*pb.StepFrame, error) {
 	res := &pb.StepFrame{T: timestamppb.Now()}
 	switch in.Direction {
@@ -65,6 +67,13 @@ func (s *serverNode) MoveChar(ctx context.Context, in *pb.MoveRequest) (*pb.Step
 	return res, nil
 }
 
+// RelayTank 坦克帧同步
+// 服务器流数据形式,在属性输入后持续返回游戏中所有坦克的位置[position]
+// 状态:
+// bodyAngle - 身体转向角度
+// targetBodyAngle - 目标身体转向角度
+// turretAngle - 炮台转向角度
+// targetTurretAngle - 目标炮台转向角度
 func (s *serverNode) RelayTank(in *pb.TankAttr, stream pb.Game_RelayTankServer) error {
 
 	t := tank.NewTank(in.Name, attr.Offset{Dx: in.Position.Dx, Dy: in.Position.Dy}, float64(in.BodyAngle), float64(in.TargetBodyAngle), float64(in.TurretAngle), float64(in.TargetTurretAngle))
@@ -90,6 +99,7 @@ func (s *serverNode) RelayTank(in *pb.TankAttr, stream pb.Game_RelayTankServer) 
 	return nil
 }
 
+// UpdateTank 更新坦克属性
 func (s *serverNode) UpdateTank(ctx context.Context, in *pb.TankAttr) (*pb.StepFrame, error) {
 	tk := tank.NewTank(in.Name, attr.Offset{Dx: in.Position.Dx, Dy: in.Position.Dy}, float64(in.BodyAngle), float64(in.TargetBodyAngle), float64(in.TurretAngle), float64(in.TargetTurretAngle))
 	f := s.stub.UpdateClient(tk)
